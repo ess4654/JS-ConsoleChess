@@ -17,15 +17,18 @@ var W_queen = "%c♕ ";
 
 //define the logical game board
 var grid = [
-['R','H','B','K','Q','B','H','R'],
-['P','P','P','P','P','P','P','P'],
-[' ',' ',' ',' ',' ',' ','k',' '],
-[' ',' ','H',' ',' ',' ','P',' '],
-['p',' ',' ','b','Q',' ',' ',' '],
-[' ',' ',' ',' ',' ',' ','r',' '],
-['p','p','p','p','p','p','p','p'],
-['r','h','b','q','k','b','h','r']
+['1','2','3','4','5','6','7','8'],
+['9','10','11','12','13','14','15','16'],
+[' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' '],
+['25','26','27','28','29','30','31','32'],
+['17','18','19','20','21','22','23','24']
 ];
+
+//define alphabet for selection logic
+var Alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a'];
 
 var odd;
 var even;
@@ -34,6 +37,23 @@ var selected = [];
 
 function BuildBoard()
 {
+	//reset grid of selected elements
+	for(var z = 0; z<64; z++) {
+		if(selected[z]) {
+			var num = grid[parseInt(z/8)][z%8];
+			var num2 = Math.round(100 * (num - parseInt(num)));
+			if(num2 > 0) {
+				grid[parseInt(z/8)][z%8] = num2;
+			}
+		}
+	}
+
+	//Create selected map
+	selected = [];
+	for(var x = 0; x<64; x++) {
+		selected[x] = false;
+	}
+
 	//Create board pieces
 	board = [];
 	for(var i = 0; i<4; i++) {
@@ -45,12 +65,6 @@ function BuildBoard()
 		}
 		board.push(even);
 		board.push(odd);
-	}
-
-	//Create selected map
-	selected = [];
-	for(var x = 0; x<64; x++) {
-		selected[x] = false;
 	}
 }
 
@@ -126,6 +140,7 @@ function DrawBoard()
 			"background:white;" //spacer
 		);
 	}
+	console.log(grid);
 }
 
 function getBoardColor(i, k)
@@ -136,32 +151,35 @@ function getBoardColor(i, k)
 
 function getPieceFromBoard(piece)
 {
-	switch(piece)
+	var p = piece;
+	switch(true)
 	{
-		case 'R':
-			return B_rook;
-		case 'H':
-			return B_knight;
-		case 'B':
-			return B_bishop;
-		case 'K':
-			return B_king;
-		case 'Q':
-			return B_queen;
-		case 'P':
-			return B_pawn;
-		case 'r':
+		case p == 1 || p == 8:
 			return W_rook;
-		case 'h':
+		case p == 2 || p == 7:
 			return W_knight;
-		case 'b':
+		case p == 3 || p == 6:
 			return W_bishop;
-		case 'k':
+		case p == 4:
 			return W_king;
-		case 'q':
+		case p == 5:
 			return W_queen;
-		case 'p':
+		case p >= 9 && p <= 16:
 			return W_pawn;
+		case p == 17 || p == 24:
+			return B_rook;
+		case p == 18 || p == 23:
+			return B_knight;
+		case p == 19 || p == 22:
+			return B_bishop;
+		case p == 21:
+			return B_king;
+		case p == 20:
+			return B_queen;
+		case p >= 25 && p <= 32:
+			return B_pawn;
+		case p >= 33:
+			return "%c" + Alphabet[parseInt(p)%33] + "  " ;
 		default:
 			return blank;
 	}
@@ -169,13 +187,43 @@ function getPieceFromBoard(piece)
 
 function getPaddingByPiece(piece)
 {
-	switch(piece)
+	var p = piece;
+	switch(true)
 	{
-		case B_pawn || W_pawn:
+		case p == B_pawn || p == blank:
 			return 0;
-		case blank:
+		case (p[2] >= 'A' && p[2] <= 'Z') || p[2] == 'a':
 			return 0;
 		default:
 			return 3;
 	}
+}
+
+function findPosition(piece)
+{
+	var array = [];
+	for(var i = 0; i<64; i++) {
+		if(getPieceFromBoard(parseInt(grid[parseInt(i/8)][i%8])) == piece) {
+			array.push(i);
+		}
+	}
+
+	if(array.length == 1 || array.length == 0) return array;
+	var A;
+	var B = 33;
+	for(var j = 0; j < array.length; j++) {
+		A = B - array[j];
+		A = A + array[j];
+		if(!selected[i])
+			grid[parseInt(array[j]/8)][array[j]%8] = A + (grid[parseInt(array[j]/8)][array[j]%8]/100);
+		else
+			grid[parseInt(array[j]/8)][array[j]%8] = grid[parseInt(array[j]/8)][array[j]%8];
+		B++;
+	}
+	return array;
+}
+
+function SelectPiece(i)
+{
+	selected[i] = true;
 }
