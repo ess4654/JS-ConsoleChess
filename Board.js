@@ -140,7 +140,7 @@ function DrawBoard()
 			"background:white;" //spacer
 		);
 	}
-	console.log(grid);
+	//console.log(grid);
 }
 
 function getBoardColor(i, k)

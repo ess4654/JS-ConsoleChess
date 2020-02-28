@@ -3,12 +3,14 @@ var multi_piece = false;
 var num_pieces = 0;
 var position_array = [];
 
-BuildBoard();
-DrawBoard();
+refresh();
 
 Object.defineProperty(window, "select_pawn", {
   get: function() {
-  	if(multi_piece != "pawns") { return Select(B_pawn, W_pawn, "pawns"); }
+  	if(multi_piece != "pawns") {
+  		refresh();
+  		return Select(B_pawn, W_pawn, "pawns");
+  	}
 	else 
   		return "You must select a pawn to move [A-"+Alphabet[num_pieces-1]+"].";
   }
@@ -16,7 +18,10 @@ Object.defineProperty(window, "select_pawn", {
 
 Object.defineProperty(window, "select_rook", {
   get: function() {
-  	if(multi_piece != "rooks") { return Select(B_rook, W_rook, "rooks"); }
+  	if(multi_piece != "rooks") {
+  		refresh();
+  		return Select(B_rook, W_rook, "rooks");
+  	}
 	else 
   		return "You must select a rook to move [A-"+Alphabet[num_pieces-1]+"].";
   }
@@ -24,7 +29,10 @@ Object.defineProperty(window, "select_rook", {
 
 Object.defineProperty(window, "select_knight", {
   get: function() {
-  	if(multi_piece != "knights") { return Select(B_knight, W_knight, "knights"); }
+  	if(multi_piece != "knights") {
+  		refresh();
+  		return Select(B_knight, W_knight, "knights");
+  	}
 	else 
   		return "You must select a knight to move [A-"+Alphabet[num_pieces-1]+"].";
   }
@@ -32,7 +40,10 @@ Object.defineProperty(window, "select_knight", {
 
 Object.defineProperty(window, "select_bishop", {
   get: function() {
-  	if(multi_piece != "bishops") { return Select(B_bishop, W_bishop, "bishops"); }
+  	if(multi_piece != "bishops") {
+  		refresh();
+  		return Select(B_bishop, W_bishop, "bishops");
+  	}
   	else 
   		return "You must select a bishop to move [A-"+Alphabet[num_pieces-1]+"].";
   }
@@ -48,6 +59,7 @@ Object.defineProperty(window, "select_king", {
 
 function Select(p1Piece, p2Piece, type)
 {
+	position_array = [];
 	position_array = (player == 1) ? findPosition(p1Piece) : findPosition(p2Piece);
   	num_pieces = position_array.length;
   	return PieceSelected(position_array, type);
@@ -92,18 +104,28 @@ function SelectSinglePiece(pos)
 	if(pos+1 > position_array.length || pos < 0)
 		return "Error: you must selected a type of piece to move first.";
 	position_array = [position_array[pos]];
-		return "Select a location to move piece.";
+	BuildBoard();
+	multi_piece = false;
+  	num_pieces = 1;
+	SelectPiece(position_array[0]);
+	DrawBoard();
+	return "Select a location to move piece.";
 }
 
 Object.defineProperty(window, "deselect", {
   get: function() {
-  	BuildBoard();
+  	return refresh();
+  }
+});
+
+function refresh()
+{
+	BuildBoard();
   	DrawBoard();
   	multi_piece = false;
   	num_pieces = 0;
   	return "Input Command. Type help for list of commands.";
-  }
-});
+}
 
 Object.defineProperty(window, "help", {
   get: function() {
