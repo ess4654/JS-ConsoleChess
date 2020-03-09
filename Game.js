@@ -1,9 +1,11 @@
+//Global Variables
 var player = 1;
 var multi_piece = false;
 var num_pieces = 0;
 var position_array = [];
 
-refresh();
+//Initialize Game
+Init("Input Command. Type 'help' for list of commands.");
 
 Object.defineProperty(window, "select_pawn", {
   get: function() {
@@ -11,8 +13,11 @@ Object.defineProperty(window, "select_pawn", {
   		refresh();
   		return Select(B_pawn, W_pawn, "pawns");
   	}
-	else 
-  		return "You must select a pawn to move [A-"+Alphabet[num_pieces-1]+"].";
+	else {
+		console.clear();
+		DrawBoard();
+  		return msg("You must select a pawn to move [A-"+Alphabet[num_pieces-1]+"].");
+	}
   }
 });
 
@@ -22,8 +27,11 @@ Object.defineProperty(window, "select_rook", {
   		refresh();
   		return Select(B_rook, W_rook, "rooks");
   	}
-	else 
-  		return "You must select a rook to move [A-"+Alphabet[num_pieces-1]+"].";
+	else {
+		console.clear();
+		DrawBoard();
+  		return msg("You must select a rook to move [A-"+Alphabet[num_pieces-1]+"].");
+	}
   }
 });
 
@@ -33,8 +41,11 @@ Object.defineProperty(window, "select_knight", {
   		refresh();
   		return Select(B_knight, W_knight, "knights");
   	}
-	else 
-  		return "You must select a knight to move [A-"+Alphabet[num_pieces-1]+"].";
+	else {
+		console.clear();
+		DrawBoard();
+  		return msg("You must select a knight to move [A-"+Alphabet[num_pieces-1]+"].");
+	}
   }
 });
 
@@ -44,8 +55,11 @@ Object.defineProperty(window, "select_bishop", {
   		refresh();
   		return Select(B_bishop, W_bishop, "bishops");
   	}
-  	else 
-  		return "You must select a bishop to move [A-"+Alphabet[num_pieces-1]+"].";
+  	else {
+  		console.clear();
+		DrawBoard();
+  		return msg("You must select a bishop to move [A-"+Alphabet[num_pieces-1]+"].");
+  	}
   }
 });
 
@@ -99,37 +113,68 @@ Object.defineProperty(window, "select_H", {
 
 function SelectSinglePiece(pos)
 {
-	if(position_array.length == 0 || num_pieces == 0)
-		return "Error: you must selected a type of piece to move first.";
-	if(pos+1 > position_array.length || pos < 0)
-		return "Error: you must selected a type of piece to move first.";
+	if(num_pieces == 1) {
+		console.clear();
+		DrawBoard();
+		return(msg("Select a location to move piece."));
+	}
+	if(position_array.length == 0 || num_pieces == 0) {
+		console.clear();
+		DrawBoard();
+		return msg("Error: you must selected a type of piece to move first.");
+	}
+	if(pos+1 > position_array.length || pos < 0) {
+		console.clear();
+		DrawBoard();
+		return msg("Error: you must selected a type of piece to move first.");
+	}
 	position_array = [position_array[pos]];
 	BuildBoard();
 	multi_piece = false;
   	num_pieces = 1;
 	SelectPiece(position_array[0]);
 	DrawBoard();
-	return "Select a location to move piece.";
+	return msg("Select a location to move piece.");
 }
 
 Object.defineProperty(window, "deselect", {
   get: function() {
-  	return refresh();
+  	multi_piece = false;
+  	num_pieces = 0;
+  	return refresh("Input Command. Type 'help' for list of commands.");
   }
 });
 
-function refresh()
+function Init(message)
 {
 	BuildBoard();
   	DrawBoard();
   	multi_piece = false;
   	num_pieces = 0;
-  	return "Input Command. Type help for list of commands.";
+  	console.log("%c"+Array(87).join('*'), "color:red;");
+  	console.log("%c"+message, "font-size:16px; padding:7px 0px 7px 0px;");
+  	console.log("%c"+Array(87).join('*'), "color:red;");
+}
+
+function refresh(message)
+{
+	BuildBoard();
+  	DrawBoard();
+  	console.log("%c"+Array(87).join('*'), "color:red;");
+  	console.log("%c"+message, "font-size:16px; padding:7px 0px 7px 0px;");
+  	return Array(86).join('*');
+}
+
+function msg(message)
+{
+  	console.log("%c"+Array(87).join('*'), "color:red;");
+  	console.log("%c"+message, "font-size:16px; padding:7px 0px 7px 0px;");
+  	return Array(86).join('*');
 }
 
 Object.defineProperty(window, "help", {
   get: function() {
-  	return "\nCOMMANDS:\n\nnew_game (use to reset board)\nselect_pawn\nselect_rook\nselect_knight\nselect_bishop\nselect_queen\nselect_king\nselect_queen\nselect_[A-H] (used to select when multiple pieces are available)\nmove_[A-Z, a] (used to move a piece once selected)\ndeselect\nhelp\nquit\n";
+  	return refresh("\nCOMMANDS:\n\nnew_game (use to reset board)\nselect_pawn\nselect_rook\nselect_knight\nselect_bishop\nselect_queen\nselect_king\nselect_queen\nselect_[A-H] (used to select when multiple pieces are available)\nmove_[A-Z, a] (used to move a piece once selected)\ndeselect\nhelp\nquit\n");
   }
 });
 
@@ -150,14 +195,14 @@ function PieceSelected(position_array, piece)
   	DrawBoard();
   	if(position_array.length == 1){
   		multi_piece = false;
-  		return "Select a location to move piece.";
+  		return msg("Select a location to move piece.");
   	}
   	else if(position_array.length == 0){
   		multi_piece = false;
-  		return ((piece == "king" || piece == "queen")?"The ":"All ")+piece+" for player "+((player == 1)?1:2)+((piece == "king" || piece == "queen")?" is":" are")+" gone.";
+  		return msg(((piece == "king" || piece == "queen")?"The ":"All ")+piece+" for player "+((player == 1)?1:2)+((piece == "king" || piece == "queen")?" is":" are")+" gone.");
   	}
   	else {
   		multi_piece = piece;
-  		return "Select a piece.";
+  		return msg("Select a piece.");
   	}
 }

@@ -17,14 +17,14 @@ var W_queen = "%c♕ ";
 
 //define the logical game board
 var grid = [
-['1','2','3','4','5','6','7','8'],
-['9','10','11','12','13','14','15','16'],
-[' ',' ',' ',' ',' ',' ',' ',' '],
-[' ',' ',' ',' ',' ',' ',' ',' '],
-[' ',' ',' ',' ',' ',' ',' ',' '],
-[' ',' ',' ',' ',' ',' ',' ',' '],
-['25','26','27','28','29','30','31','32'],
-['17','18','19','20','21','22','23','24']
+['1','2','3','4','5','6','7','8',' ',' '],
+['9','10','11','12','13','14','15','16',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+[' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
+['25','26','27','28','29','30','31','32',' ',' '],
+['17','18','19','20','21','22','23','24',' ',' ']
 ];
 
 //define alphabet for selection logic
@@ -63,6 +63,8 @@ function BuildBoard()
 			odd += "%c "+getPieceFromBoard(grid[2*i+1][k])+"%c ";
 			even += "%c "+getPieceFromBoard(grid[2*i][k])+"%c ";
 		}
+		odd += "%c "+getPieceFromBoard(grid[2*i+1][8])+"%c "+"%c "+getPieceFromBoard(grid[2*i+1][9])+"%c ";
+		even += "%c "+getPieceFromBoard(grid[2*i][8])+"%c "+"%c "+getPieceFromBoard(grid[2*i][9])+"%c ";
 		board.push(even);
 		board.push(odd);
 	}
@@ -71,8 +73,15 @@ function BuildBoard()
 function DrawBoard()
 {
 	console.clear();
+	
+	if(player == 1)
+		console.log("%cPlayer 1's Turn", "line-height:60px; background-color:blue; font-size:45px; color:white; padding: 5px 101px 5px 101px;");
+	else 
+		console.log("%cPlayer 2's Turn", "line-height:60px; background-color:red; font-size:45px; color:white; padding: 5px 101px 5px 101px;");
+	
 	for(var i = 0; i<4; i++) {
 		console.log(board[i*2],
+			/***** BOARD *****/
 			"background-color:"+((selected[2*i*8+0])?"yellow":getBoardColor(i*2, 0))+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
 			"background-color:"+((selected[2*i*8+0])?"yellow":getBoardColor(i*2, 0))+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i][0]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i][0]) == blank)?"transparent":"default")+";",
 			"background:white;", //spacer
@@ -103,10 +112,20 @@ function DrawBoard()
 
 			"background-color:"+((selected[2*i*8+7])?"yellow":getBoardColor(i*2, 7))+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
 			"background-color:"+((selected[2*i*8+7])?"yellow":getBoardColor(i*2, 7))+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i][7]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i][7]) == blank)?"transparent":"default")+";",
+			"background:white;", //spacer
+
+			/***** COLLECTION BIN *****/
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i][8]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i][8]) == blank)?"transparent":"default")+";",
+			"background:white;", //spacer
+
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i][9]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i][9]) == blank)?"transparent":"default")+";",
 			"background:white;" //spacer
 		);
 
 		console.log(board[i*2+1],
+			/***** BOARD *****/
 			"background-color:"+((selected[2*i*8+8])?"yellow":getBoardColor(i*2+1, 0))+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
 			"background-color:"+((selected[2*i*8+8])?"yellow":getBoardColor(i*2+1, 0))+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i+1][0]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i+1][0]) == blank)?"transparent":"default")+";",
 			"background:white;", //spacer
@@ -137,6 +156,15 @@ function DrawBoard()
 
 			"background-color:"+((selected[2*i*8+15])?"yellow":getBoardColor(i*2+1, 7))+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
 			"background-color:"+((selected[2*i*8+15])?"yellow":getBoardColor(i*2+1, 7))+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i+1][7]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i+1][7]) == blank)?"transparent":"default")+";",
+			"background:white;", //spacer
+
+			/***** COLLECTION BIN *****/
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i+1][8]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i+1][8]) == blank)?"transparent":"default")+";",
+			"background:white;", //spacer
+
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px 0px 2px 0px;",
+			"background-color:"+((player == 1)?"teal":"crimson")+"; font-size:30px; line-height:58px; padding: 2px "+getPaddingByPiece(getPieceFromBoard(grid[2*i+1][9]))+"px 2px 0px; color:"+((getPieceFromBoard(grid[2*i+1][9]) == blank)?"transparent":"default")+";",
 			"background:white;" //spacer
 		);
 	}
