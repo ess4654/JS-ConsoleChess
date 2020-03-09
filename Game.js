@@ -115,8 +115,10 @@ function SelectSinglePiece(pos)
 {
 	if(num_pieces == 1) {
 		console.clear();
-		DrawBoard();
-		return(msg("Select a location to move piece."));
+		return msg(ShowPositions(position_array[0], num_pieces, player, function(result) {
+			DrawBoard();
+			console.log(result);
+		}));
 	}
 	if(position_array.length == 0 || num_pieces == 0) {
 		console.clear();
@@ -133,8 +135,10 @@ function SelectSinglePiece(pos)
 	multi_piece = false;
   	num_pieces = 1;
 	SelectPiece(position_array[0]);
-	DrawBoard();
-	return msg("Select a location to move piece.");
+	return msg(ShowPositions(position_array[0], num_pieces, player, function(result) {
+		DrawBoard();
+		console.log(result);
+	}));
 }
 
 Object.defineProperty(window, "deselect", {
@@ -195,7 +199,10 @@ function PieceSelected(position_array, piece)
   	DrawBoard();
   	if(position_array.length == 1){
   		multi_piece = false;
-  		return msg("Select a location to move piece.");
+  		return msg(ShowPositions(position_array[0], num_pieces, player, function(result) {
+			DrawBoard();
+			console.log(result);
+		}));
   	}
   	else if(position_array.length == 0){
   		multi_piece = false;
